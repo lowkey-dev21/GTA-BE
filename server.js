@@ -14,8 +14,9 @@ const app = express();
 const PORT = process.env.PORT;
 
 // corsOptions
+const CLIENT_URL = process.env.CLIENT_URL
 app.use(
-  cors(),
+  cors({ origin: CLIENT_URL, credentials: true }),
 );
 
 // middleware
