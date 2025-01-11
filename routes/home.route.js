@@ -1,12 +1,12 @@
 import express from "express";
-import { emailJWT } from "../middleware/emailJWT.js";
-import { verifyJWT } from "../middleware/verifyJWT.js";
+import { emailJWT } from "../middleware/email.middleware.js";
+import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   profile,
   editProfile,
   deleteProfilePicture,
   uploadProfilePicture,
-} from "../controllers/home/profile.js";
+} from "../controllers/home/profile.controller.js";
 
 import {
   changePassword,
@@ -15,7 +15,7 @@ import {
   getVerifyChangeEmailToken,
   verifychangeEmailOtp,
   changeEmail,
-} from "../controllers/home/accountSettings.js";
+} from "../controllers/home/accountSettings.controller.js";
 
 const router = express.Router();
 

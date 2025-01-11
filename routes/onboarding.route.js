@@ -1,5 +1,5 @@
 import express from "express"
-import { createCountry, createPhoneNumber, createUsername, skipAllOnboard, skipOnboardOne, skipOnboardThree, skipOnboardTwo, uploadProfilePicture } from "../controllers/onboarding/onboarding.js"
+import { createCountry, createPhoneNumber, createUsername, skipAllOnboard, skipOnboardOne, skipOnboardThree, skipOnboardTwo, uploadProfilePicture } from "../controllers/onboarding/onboarding.controller.js"
 
 const router = express.Router()
 

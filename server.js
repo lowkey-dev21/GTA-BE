@@ -1,11 +1,11 @@
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
-import auth from "./routes/authApi.js";
-import onboard from "./routes/onboarding.js"
-import home from "./routes/homeApi.js";
-import blog from "./routes/blogApi.js";
-import { verifyJWT } from "./middleware/verifyJWT.js";
+import auth from "./routes/auth.route.js";
+import onboard from "./routes/onboarding.route.js"
+import home from "./routes/home.route.js";
+import blog from "./routes/socials.route.js";
+import { verifyJWT } from "./middleware/auth.middleware.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { mongooDBConnect } from "./db/mongoose.db.js";
@@ -16,7 +16,11 @@ const PORT = process.env.PORT;
 // corsOptions
 const CLIENT_URL = process.env.CLIENT_URL
 app.use(
-  cors({ origin: CLIENT_URL, credentials: true }),
+  cors({
+    origin: CLIENT_URL, credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+  }),
 );
 
 // middleware
@@ -40,7 +44,7 @@ app.use("/api/onboard", verifyJWT, onboard)
 app.use("/api/home", verifyJWT, home);
 
 // Blog routes with JWT verification
-app.use("/api/blog", verifyJWT, blog);
+app.use("/api/socials", verifyJWT, blog);
 
 // connect to MongoDB and start the server
 app.listen(

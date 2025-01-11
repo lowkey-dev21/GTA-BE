@@ -76,9 +76,6 @@ const userSchema = new Schema(
         default: false
       }
     },
-    followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    mates: [{ type: Schema.Types.Object, ref: "User" }],
 
     lastLogin: Date,
     resetPasswordToken: String,

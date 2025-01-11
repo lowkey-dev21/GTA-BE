@@ -16,13 +16,13 @@ const postSchema = new Schema({
   },
   author: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "SocialsUser",
     required: true,
   },
   likes: [
     {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "SocialsUser",
     },
   ],
 
@@ -54,7 +54,7 @@ postSchema.set("toJSON", { virtuals: true });
 const commentSchema = new Schema({
   commenterId: {
     type: Schema.Types.ObjectId,
-    ref: "User", // Reference to the User who commented
+    ref: "SocialsUser", // Reference to the User who commented
     required: true,
   },
   postId: {

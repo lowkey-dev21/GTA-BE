@@ -1,16 +1,16 @@
-import User from "../../model/user.model.js";
+import User from "../../model/auth/user.model.js";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import crypto from "crypto";
-import { generateTokenAndCookie } from "../../util/generateToken.js";
+import { generateTokenAndCookie } from "../../utils/generateToken.util.js";
 import { sendEmail } from "../../mailer/emial.config.js";
 import {
   emailVerificationTemplate,
   welcomeEmailTemplate,
   resetPasswordTemplate,
   passwordChangedTemplate,
-} from "../../mailer/emailTemplate.js";
+} from "../../mailer/emailTemplate.mailer.js";
 
 // sign up
 export const signUp = async (req, res) => {

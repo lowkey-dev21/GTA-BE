@@ -1,4 +1,4 @@
-import User from "../../model/user.model.js"
+import User from "../../model/auth/user.model.js"
 import moment from "moment";
 import multer from "multer";
 import path from "path";

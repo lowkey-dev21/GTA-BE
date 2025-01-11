@@ -1,5 +1,5 @@
-import { Post, Comment } from "../../model/post.model.js";
-import User from "../../model/user.model.js";
+import { Post, Comment } from "../../model/socials/post.model.js";
+import SocialsUser from "../../model/auth/user.model.js";
 import { formatDistanceToNow } from "date-fns";
 import multer from "multer";
 import path from "path";
@@ -78,7 +78,7 @@ export const createPost = async (req, res) => {
         }
       }
 
-      const user = await User.findById(userId);
+      const user = await SocialsUser.findById(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -162,14 +162,14 @@ export const getAllPosts = async (req, res) => {
 export const getPersonalPost = async (req, res) => {
   try {
     const userId = req.user._id;
-    const user = await User.findById(userId); // Get userId from the token
+    const user = await SocialsUser.findById(userId); // Get userId from the token
 
     // Find all posts by the author (userId)
     const posts = await Post.find({ author: userId })
       .sort({ createdAt: -1 })
       .populate({
         path: "author",
-        select: "firstName lastName username bio profilePicture",
+        select: "name username bio profilePicture",
       })
       .populate({
         path: "comments",
@@ -180,7 +180,7 @@ export const getPersonalPost = async (req, res) => {
       })
       .populate({
         path: "likes",
-        select: "firstName lastName username profilePicture",
+        select: "name lastName username profilePicture",
       });
 
     // If no posts found, return a 404 response
@@ -195,7 +195,7 @@ export const getPersonalPost = async (req, res) => {
       username: user.username,
       bio: user.bio,
       profilePicture: user.profilePicture,
-      fullName: `${user.firstName} ${user.lastName}`,
+      name: user.name,
       totalLikes,
     };
 
@@ -204,7 +204,7 @@ export const getPersonalPost = async (req, res) => {
       _id: post._id,
       title: post.title,
       content: post.content,
-      author: `${post.author.firstName} ${post.author.lastName}`,
+      author: post.name,
       username: post.author.username,
       profilePicture: post.author.profilePicture,
       createdAt: formatDistanceToNow(new Date(post.createdAt), {

@@ -1,10 +1,10 @@
-import User from "../../model/user.model.js";
+import User from "../../model/auth/user.model.js";
 import bcrypt from "bcrypt";
-import { generateEmailTokenAndCookie } from "../../util/generateEmailToken.js";
-import { emailVerificationTemplate } from "../../mailer/emailTemplate.js";
+import { generateEmailTokenAndCookie } from "../../utils/generateEmailToken.util.js";
+import { emailVerificationTemplate } from "../../mailer/emailTemplate.mailer.js";
 
 import { sendEmail } from "../../mailer/emial.config.js";
-import { profileUpdatedTemplate } from "../../mailer/emailTemplate.js";
+import { profileUpdatedTemplate } from "../../mailer/emailTemplate.mailer.js";
 
 // change password
 export const changePassword = async (req, res) => {
