@@ -44,117 +44,76 @@ const upload = multer({
 
 // Create a new post for the authenticated user, including the uploaded image.
 export const createPost = async (req, res) => {
-  upload.single("images")(req, res, async (err) => {
-    if (err) {
-      console.error("Multer Error:", err);
-      return res.status(400).json({ message: err.message });
-    }
+  try {
+    const { title, content, images } = req.body;
+    const socialUser = req.socialUser; // Get from middleware
 
-    try {
-      const userId = req.user._id;
+    const post = new Post({
+      title,
+      content,
+      images,
+      author: socialUser._id
+    });
 
-      if (!userId) {
-        return res.status(401).json({ message: "User not authorized" });
-      }
+    await post.save();
+    console.log('Created post with author:', socialUser._id);
 
-      const { content, title } = req.body;
+    const savedPost = await Post.findById(post._id)
+      .populate('author')
+      .lean();
 
-      if (!content || !title) {
-        return res
-          .status(400)
-          .json({ message: "Title and content are required" });
-      }
-
-      let imageUrl = "";
-      if (req.file) {
-        try {
-          const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-            folder: "posts",
-          });
-          imageUrl = uploadResult.secure_url;
-        } catch (cloudinaryError) {
-          console.error("Cloudinary Upload Error:", cloudinaryError);
-          return res.status(500).json({ message: "Image upload failed" });
-        }
-      }
-
-      const user = await SocialsUser.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const post = new Post({
-        title,
-        content,
-        author: userId,
-        images: imageUrl,
-      });
-
-      await post.save();
-
-      res.status(201).json({
-        fullName: `${user.firstName} ${user.lastName}`,
-        post,
-        message: "Posted successfully",
-      });
-    } catch (error) {
-      console.error("Server Error:", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
+    res.status(201).json(savedPost);
+  } catch (error) {
+    console.error('Create post error:', error);
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // Get all posts sorted by createdAt in descending order, along with the author's firstName, lastName, comments, likes, and likes count.
 export const getAllPosts = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const posts = await Post.find()
-      .sort({ createdAt: -1 }) // Sort posts by creation date in descending order
-      .populate({
-        path: "author",
-        select: "username profilePicture firstName lastName",
-      }) // Populate author's username
-      .populate({
-        path: "comments", // Populate comments
-        populate: {
-          path: "commenterId", // Populate the commenter inside each comment
-          select: "username profilePicture firstName lastName", // Only return the username
-        },
-      })
-      .populate({
-        path: "likes",
-        select: "firstName lastName username profilePicture ",
-      });
+    // Debug: Log the query
+    console.log('Fetching posts...');
 
-    // Format the response to include the commenter's username directly
-    const formattedPosts = posts.map((post) => ({
-      _id: post._id,
-      title: post.title,
-      content: post.content,
-      images: post.images,
-      author: post.author?.username,
-      profilePicture: post.author?.profilePicture,
-      fullName: post.author?.firstName + " " + post.author?.lastName,
-      createdAt: formatDistanceToNow(new Date(post.createdAt), {
-        addSuffix: true,
-      }), // e.g., "5 hours ago"
-      likes: post.likes,
-      likesCount: post.likes.length, // Include likes count
-      liked: post.likes.some((like) => like.equals(userId)),
-      comments: post.comments.map((comment) => ({
-        _id: comment._id,
-        text: comment.text,
-        commenter: comment.commenterId?.username,
-        profilePicture: comment.commenterId?.profilePicture,
-        fullName:
-          comment.commenterId?.firstName + " " + comment.commenterId?.lastName,
-      })),
-    }));
+    const posts = await Post.find()
+      .populate({
+        path: 'author',
+        model: 'SocialsUser',
+        select: 'username name profilePicture userId'
+      })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Debug: Log first post and its author
+    // console.log('First post author:', posts[0]?.author);
+
+    const formattedPosts = posts.map(post => {
+      // Debug: Log each post's author data
+      // console.log('Processing post:', post._id, 'Author:', post.author);
+
+      return {
+        _id: post._id,
+        title: post.title,
+        content: post.content,
+        author: post.author?.username || 'Unknown',
+        fullName: post.author?.name || 'Unknown',
+        profilePicture: post.author?.profilePicture || null,
+        createdAt: formatDistanceToNow(new Date(post.createdAt), {
+          addSuffix: true,
+        }),
+        likes: post.likes || [],
+        likesCount: post.likes?.length || 0,
+        comments: post.comments || []
+      };
+    });
+
+    // Debug: Log formatted posts
+    // console.log('Formatted posts:', formattedPosts.length);
 
     res.status(200).json({ posts: formattedPosts });
   } catch (error) {
+    console.error('Get posts error:', error);
     res.status(500).json({ message: error.message });
-    console.log(error);
   }
 };
 
@@ -221,7 +180,7 @@ export const getPersonalPost = async (req, res) => {
     }));
 
     // Send the response with the posts and post count
-    res.status(200).json({
+   res.status(200).json({
       posts: formattedPosts,
       blogProfile,
       postCount: posts.length,
@@ -235,7 +194,7 @@ export const getPersonalPost = async (req, res) => {
 // likes
 export const likePost = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user._id; //liker ID
     const { postId } = req.body;
 
     if (!postId) {

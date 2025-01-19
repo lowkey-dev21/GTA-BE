@@ -1,6 +1,6 @@
 import User from "../../model/auth/user.model.js";
 import bcrypt from "bcrypt";
-import { generateEmailTokenAndCookie } from "../../utils/generateEmailToken.util.js";
+import generator from "../../utils/generator.util.js";
 import { emailVerificationTemplate } from "../../mailer/emailTemplate.mailer.js";
 
 import { sendEmail } from "../../mailer/emial.config.js";
@@ -178,7 +178,8 @@ export const verifychangeEmailOtp = async (req, res) => {
     user.verificationToken = undefined;
     user.verificationTokenExpiresAt = undefined;
 
-    const token = await generateEmailTokenAndCookie(res, user._id);
+    //generate token 
+    const token = generator.generateEmailToken(res, user._id);
     await user.save();
 
     res.status(200).json({

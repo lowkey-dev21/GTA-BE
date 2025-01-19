@@ -9,6 +9,7 @@ import { verifyJWT } from "./middleware/auth.middleware.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { mongooDBConnect } from "./db/mongoose.db.js";
+import { verifySocialsUser } from "./middleware/socials.middleware.js";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -44,7 +45,7 @@ app.use("/api/onboard", verifyJWT, onboard)
 app.use("/api/home", verifyJWT, home);
 
 // Blog routes with JWT verification
-app.use("/api/socials", verifyJWT, blog);
+app.use("/api/socials", blog);
 
 // connect to MongoDB and start the server
 app.listen(

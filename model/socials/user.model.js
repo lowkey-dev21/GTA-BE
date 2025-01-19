@@ -7,21 +7,19 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    name: {
+    username: {
         type: String,
         required: true,
+        unique: true
     },
-
-    username:{
+    name: {
         type: String,
-        unique: true,
-        sparse: true,
-        lowercase: true
+        required: true
     },
     profilePicture: {
         type: String,
+        default: " "
     },
-
     bio: {
         type: String,
     },

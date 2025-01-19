@@ -3,7 +3,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import crypto from "crypto";
-import { generateTokenAndCookie } from "../../utils/generateToken.util.js";
+import generator from "../../utils/generator.util.js";
 import { sendEmail } from "../../mailer/emial.config.js";
 import {
   emailVerificationTemplate,
@@ -68,7 +68,7 @@ export const signUp = async (req, res) => {
     await user.save();
 
     // Create Token
-    const token = await generateTokenAndCookie(res, user._id);
+    generator.generateAuthToken(res, user._id);
 
     res.status(201).json({
       message: "Signup successful",
@@ -122,7 +122,7 @@ export const verifyEmail = async (req, res) => {
     sendEmail(res, user.email, template);
 
     // Create Token
-    const token = await generateTokenAndCookie(res, user._id);
+    generator.generateAuthToken(res, user._id);
 
     res.status(200).json({
       message: "Email verified successfully",
@@ -170,7 +170,7 @@ export const login = async (req, res) => {
     }
 
     // Create Token
-    const token = await generateTokenAndCookie(res, user._id);
+    generator.generateAuthToken(res, user._id);
 
     res.status(200).json({
       success: true,

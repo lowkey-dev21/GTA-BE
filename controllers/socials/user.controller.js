@@ -1,5 +1,6 @@
 import SocialsUser from  "../../model/socials/user.model.js"
 import User from "../../model/auth/user.model.js"
+import generator from "../../utils/generator.util.js";
 
 export const createSocialsUser = async (req, res) => {
     const {bio, profilePicture , name} = req.body;
@@ -23,6 +24,8 @@ export const createSocialsUser = async (req, res) => {
             profilePicture: profilePicture,
             bio: bio,
         })
+
+        generator.generateSocialsToken(res, socialUser._id)
 
        return res.status(201).json({socialsUser: {...socialUser._doc}});
     } catch (error) {
