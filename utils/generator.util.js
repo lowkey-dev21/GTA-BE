@@ -34,27 +34,7 @@ const generator = {
   });
 
   return emailVerifyToken; // Returning the token
-},
-
-generateSocialsToken : (res, userId) => {
-  const socialsToken = jwt.sign(
-    { userId }, 
-    process.env.SECRET,
-    { expiresIn: "7d" }
-  );
-
-  res.cookie("socialsToken", socialsToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax", // Changed from strict for cross-domain
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: "/",
-    domain: process.env.NODE_ENV === "development" ? "localhost" : process.env.DOMAIN
-  });
-  
-  return socialsToken;
 }
-
 
 }
 

@@ -1,5 +1,4 @@
 import { Post, Comment } from "../../model/socials/post.model.js";
-import SocialsUser from "../../model/auth/user.model.js";
 import { formatDistanceToNow } from "date-fns";
 import multer from "multer";
 import path from "path";
@@ -46,17 +45,17 @@ const upload = multer({
 export const createPost = async (req, res) => {
   try {
     const { title, content, images } = req.body;
-    const socialUser = req.socialUser; // Get from middleware
+    const user = req.userId; // Get from middleware
 
     const post = new Post({
       title,
       content,
       images,
-      author: socialUser._id
+      author: user._id
     });
 
     await post.save();
-    console.log('Created post with author:', socialUser._id);
+    console.log('Created post with author:', user._id);
 
     const savedPost = await Post.findById(post._id)
       .populate('author')

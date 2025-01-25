@@ -34,22 +34,28 @@ const userSchema = new Schema(
       type: String
     },
 
-    beginner: {
-      type: Boolean,
-      default: true,
+    //   level
+    level: {
+      beginner: {
+          type: Boolean,
+          default: true
+      },
+      amateur: {
+          type:  Boolean,
+          default: false
+      },
+
+      expert: {
+          type: Boolean,
+          default: false
+      }
     },
-    amateur: {
-      type: Boolean,
-      default: false,
-    },
-    expert: {
-      type: Boolean,
-      default: false,
-    },
+
     isVerified: {
       type: Boolean,
       default: false,
     },
+
 
     profilePicture: {
       type: String,
@@ -76,6 +82,15 @@ const userSchema = new Schema(
         default: false
       }
     },
+
+    //   socials
+      socials: {
+          followers: [{type: Schema.Types.ObjectId, ref: "User"}],
+          following: [{type: Schema.Types.ObjectId, ref: "User"}]
+      },
+
+   //Education
+      mates: [{ type: Schema.Types.ObjectId, ref: "User" }],
 
     lastLogin: Date,
     resetPasswordToken: String,

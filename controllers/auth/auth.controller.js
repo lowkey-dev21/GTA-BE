@@ -12,6 +12,10 @@ import {
   passwordChangedTemplate,
 } from "../../mailer/emailTemplate.mailer.js";
 
+
+
+
+
 // sign up
 export const signUp = async (req, res) => {
   const { firstName, lastName, email, password } =
@@ -68,12 +72,12 @@ export const signUp = async (req, res) => {
     await user.save();
 
     // Create Token
-    generator.generateAuthToken(res, user._id);
+    const token = generator.generateAuthToken(res, user._id);
 
     res.status(201).json({
       message: "Signup successful",
       success: true,
-      user: { ...user._doc, password: undefined, verificationToken: undefined },
+      user: { ...user._doc, password: undefined, verificationToken: undefined , token: token},
     });
 
     const template = {
@@ -170,12 +174,17 @@ export const login = async (req, res) => {
     }
 
     // Create Token
-    generator.generateAuthToken(res, user._id);
+    const token = generator.generateAuthToken(res, user._id);
+
+    // Socials Token
+    const userNameKey = user.username
+    const socialUserId = await User.findOne({username : userNameKey })
 
     res.status(200).json({
       success: true,
       message: "User Logged in successfully",
       user: user.lastLogin,
+      token: token
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -270,8 +279,8 @@ export const resetPassword = async (req, res) => {
     }
 
     // update password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = hashedPassword;
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = await bcrypt.hash(password, 10)
     user.resetPasswordToken = undefined;
     user.resetPasswordTokenExpiresAt = undefined;
     await user.save();
@@ -285,6 +294,8 @@ export const resetPassword = async (req, res) => {
 
     // Send password changed notification email
     sendEmail(res, user.email, template);
+
+
 
     res
       .status(200)

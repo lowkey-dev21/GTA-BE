@@ -4,7 +4,9 @@ import User from "../model/auth/user.model.js";
 
 export const verifyJWT = async (req, res, next) => {
   // Extract the token from the Authorization header
-  const token = req.cookies.token
+  const authHeader = req.header("Authorization");
+  const token = authHeader && authHeader.split(" ")[1]; // Extract token if header is present
+
   if (!token) {
     return res.status(401).json({ message: "Unauthorized, token missing" });
   }
@@ -22,7 +24,7 @@ export const verifyJWT = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log("Erro in verifyToken", error);
+    console.log("Error in verifyToken", error);
     return res.status(401).json({ success: false, message: "Server Error" });
   }
 };

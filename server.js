@@ -13,17 +13,7 @@ import { mongooDBConnect } from "./db/mongoose.db.js";
 const app = express();
 const PORT = process.env.PORT;
 
-// corsOptions
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000'; // Set a default URL for local development
-const corsOptions = {
-    origin: CLIENT_URL, // Same as before
-    credentials: true,   // Same as before
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Add allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // Add allowed headers
-};
-
-
-app.use(cors(corsOptions)); // Use the updated CORS configuration
+app.use(cors("*"));
 
 // middleware
 app.use(cookieParser());
@@ -38,11 +28,13 @@ if (process.env.NODE_ENV === "development") {
 // routes
 app.use("/api/auth", auth);
 
+app.use(verifyJWT)
+
 // Onboarding routes with JWT verification
-app.use("/api/onboard", verifyJWT, onboard);
+app.use("/api/onboard", onboard);
 
 // Home routes with JWT verification
-app.use("/api/home", verifyJWT, home);
+app.use("/api/home", home);
 
 // Blog routes with JWT verification
 app.use("/api/socials", blog);
