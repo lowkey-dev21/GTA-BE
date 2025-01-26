@@ -77,7 +77,8 @@ export const signUp = async (req, res) => {
     res.status(201).json({
       message: "Signup successful",
       success: true,
-      user: { ...user._doc, password: undefined, verificationToken: undefined , token: token},
+      user: { ...user._doc, password: undefined, verificationToken: undefined },
+      token: token
     });
 
     const template = {

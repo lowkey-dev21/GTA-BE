@@ -5,7 +5,7 @@ import User from "../model/auth/user.model.js";
 export const verifyJWT = async (req, res, next) => {
   // Extract the token from the Authorization header
   const authHeader = req.header("Authorization");
-  const token = authHeader && authHeader.split(" ")[1]; // Extract token if header is present
+  const token = req.cookies.token || authHeader && authHeader.split(" ")[1]; // Extract token if header is present
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized, token missing" });

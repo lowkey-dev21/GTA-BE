@@ -123,7 +123,7 @@ export const uploadProfilePicture = [
   async (req, res) => {
     try {
       const userId = req.user._id;
-      const profilePicture = req.file;
+      const profilePicture = req.file || {};
 
       if (!profilePicture) return res.status(400).json({ message: " field is required" })
 

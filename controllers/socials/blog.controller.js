@@ -5,6 +5,7 @@ import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 import "dotenv/config";
 import fs from "fs";
+import User from "../../model/auth/user.model.js"
 
 cloudinary.config({
   cloud_name: process.env.APP_CLOUDINARY_CLOUD_NAME,
@@ -45,21 +46,26 @@ const upload = multer({
 export const createPost = async (req, res) => {
   try {
     const { title, content, images } = req.body;
-    const user = req.userId; // Get from middleware
+    const user = req.user; // Get from middleware
+
+    console.log(user);
 
     const post = new Post({
       title,
       content,
       images,
-      author: user._id
+      author: user._id,
     });
 
     await post.save();
     console.log('Created post with author:', user._id);
 
     const savedPost = await Post.findById(post._id)
-      .populate('author')
-      .lean();
+        .populate({
+          path: 'author',
+          select: 'firstName lastName username -_id', // Limit fields for author
+        })
+        .lean();
 
     res.status(201).json(savedPost);
   } catch (error) {
@@ -77,7 +83,7 @@ export const getAllPosts = async (req, res) => {
     const posts = await Post.find()
       .populate({
         path: 'author',
-        model: 'SocialsUser',
+        model: 'User',
         select: 'username name profilePicture userId'
       })
       .sort({ createdAt: -1 })
@@ -120,7 +126,7 @@ export const getAllPosts = async (req, res) => {
 export const getPersonalPost = async (req, res) => {
   try {
     const userId = req.user._id;
-    const user = await SocialsUser.findById(userId); // Get userId from the token
+    const user = await User.findById(userId); // Get userId from the token
 
     // Find all posts by the author (userId)
     const posts = await Post.find({ author: userId })

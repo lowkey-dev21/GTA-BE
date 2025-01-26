@@ -4,7 +4,7 @@ import cors from "cors";
 import auth from "./routes/auth.route.js";
 import onboard from "./routes/onboarding.route.js";
 import home from "./routes/home.route.js";
-import blog from "./routes/socials.route.js";
+import socials from "./routes/socials.route.js";
 import { verifyJWT } from "./middleware/auth.middleware.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
@@ -37,7 +37,7 @@ app.use("/api/onboard", onboard);
 app.use("/api/home", home);
 
 // Blog routes with JWT verification
-app.use("/api/socials", blog);
+app.use("/api/socials", socials);
 
 // connect to MongoDB and start the server
 app.listen(PORT, () => {

@@ -14,11 +14,11 @@ import { verifyJWT } from "../middleware/auth.middleware.js";
 
 
 
-router.post("/blog/post",  createPost);
-router.get("/blog/posts",  getAllPosts);
-router.get("/blog/personalPost",  getPersonalPost);
-router.post("/blog/post/like",  likePost);
-router.post("/blog/post/comment",  commentPost);
-router.delete("/blog/post/delete",  deletePost);
+router.post("/post/create-post",  createPost);
+router.get("/post/get-posts",  getAllPosts);
+router.get("/post/get-personal-posts",  getPersonalPost);
+router.post("/post/like-post",  likePost);
+router.post("/post/comment-post",  commentPost);
+router.delete("/post/delete-post",  deletePost);
 
 export default router;
