@@ -1,4 +1,4 @@
-import User from "../../model/auth/user.model.js";
+import User from "../../model/user/user.model.js";
 import bcrypt from "bcrypt";
 import generator from "../../utils/generator.util.js";
 import { emailVerificationTemplate } from "../../mailer/emailTemplate.mailer.js";

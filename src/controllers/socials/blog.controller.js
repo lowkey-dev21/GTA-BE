@@ -5,24 +5,34 @@ import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 import "dotenv/config";
 import fs from "fs";
-import User from "../../model/auth/user.model.js"
+import User from "../../model/user/user.model.js"
 
+/**
+ * Configure Cloudinary with environment variables
+ * Used for image upload and storage
+ */
 cloudinary.config({
   cloud_name: process.env.APP_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.APP_CLOUDINARY_API_KEY,
   api_secret: process.env.APP_CLOUDINARY_SECRET_KEY,
 });
 
+// Create uploads directory if it doesn't exist
 const uploadsDir = path.join("src/uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+/**
+ * Configure multer storage for file uploads
+ * Files are stored locally before being uploaded to Cloudinary
+ */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
+    // Generate unique filename using timestamp and random number
     const uniqueSuffix = `${Date.now()}-${Math.round(
       Math.random() * 1e9,
     )}${path.extname(file.originalname)}`;
@@ -30,6 +40,10 @@ const storage = multer.diskStorage({
   },
 });
 
+/**
+ * Configure multer upload settings
+ * Restricts file types to jpg, jpeg, and png
+ */
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
@@ -42,35 +56,49 @@ const upload = multer({
   },
 });
 
-// Create a new post for the authenticated user, including the uploaded image.
+/**
+ * Create a new post
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - Request body containing post data
+ * @param {string} req.body.title - Post title
+ * @param {string} req.body.content - Post content
+ * @param {Array} req.body.images - Array of image URLs
+ * @param {Object} req.user - Authenticated user object from middleware
+ * @param {Object} res - Express response object
+ * @returns {Object} Created post object
+ * @throws {Error} If post creation fails
+ */
+
+//Create Post
 export const createPost = async (req, res) => {
   try {
-    const { title, content, images } = req.body;
-    const user = req.user; // Get from middleware
+    const { content, images, tag, visibility } = req.body;
+    const user = req.user; // User object attached by auth middleware
 
-    console.log(user);
-
+    // Create new post instance
     const post = new Post({
-      title,
+      tag,
       content,
       images,
       author: user._id,
+      visibility
     });
 
+    // Save post to database
     await post.save();
     console.log('Created post with author:', user._id);
 
+    // Fetch saved post with populated author field
     const savedPost = await Post.findById(post._id)
         .populate({
           path: 'author',
-          select: 'firstName lastName username -_id', // Limit fields for author
-        })
-        .lean();
+          select: 'username firstName lastName profilePicture'
+        });
 
-    res.status(201).json(savedPost);
+    return res.status(201).json(savedPost);
   } catch (error) {
-    console.error('Create post error:', error);
-    res.status(500).json({ message: error.message });
+    console.error('Error creating post:', error);
+    return res.status(500).json({ error: 'Failed to create post' });
   }
 };
 

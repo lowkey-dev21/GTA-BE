@@ -8,20 +8,24 @@ const userSchema = new Schema(
     firstName: {
       type: String,
       require: true,
+      trim: true
     },
     lastName: {
       type: String,
       require: true,
+      trim: true
     },
     email: {
       type: String,
       require: true,
+      trim: true
     },
     username: {
       type: String,
       unique: true,
       sparse: true,
-      lowercase: true
+      lowercase: true,
+      trim: true
     },
     password: {
       type: String,
@@ -36,15 +40,14 @@ const userSchema = new Schema(
 
     //   level
     level: {
+      amateur: {
+        type:  Boolean,
+        default: false
+     },
       beginner: {
           type: Boolean,
           default: true
       },
-      amateur: {
-          type:  Boolean,
-          default: false
-      },
-
       expert: {
           type: Boolean,
           default: false
@@ -83,15 +86,6 @@ const userSchema = new Schema(
       }
     },
 
-    //   socials
-      socials: {
-          followers: [{type: Schema.Types.ObjectId, ref: "User"}],
-          following: [{type: Schema.Types.ObjectId, ref: "User"}]
-      },
-
-   //Education
-      mates: [{ type: Schema.Types.ObjectId, ref: "User" }],
-
     lastLogin: Date,
     resetPasswordToken: String,
     resetPasswordTokenExpiresAt: Date,
@@ -101,4 +95,8 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
+userSchema.index({username: 1 })
+userSchema.index({email: 1})
+userSchema.index({firstName: 1})
+userSchema.index({lastName: 1})
 export default mongoose.model("User", userSchema);

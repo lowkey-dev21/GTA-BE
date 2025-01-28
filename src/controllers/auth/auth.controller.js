@@ -1,4 +1,4 @@
-import User from "../../model/auth/user.model.js";
+import User from "../../model/user/user.model.js";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import "dotenv/config";
