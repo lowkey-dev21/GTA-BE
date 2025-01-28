@@ -13,7 +13,7 @@ cloudinary.config({
   api_secret: process.env.APP_CLOUDINARY_SECRET_KEY,
 });
 
-const uploadsDir = path.join("uploads");
+const uploadsDir = path.join("src/uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }

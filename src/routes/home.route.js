@@ -1,6 +1,5 @@
 import express from "express";
 import { emailJWT } from "../middleware/email.middleware.js";
-import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   profile,
   editProfile,

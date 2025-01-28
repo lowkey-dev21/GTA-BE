@@ -10,7 +10,6 @@ import {
   deletePost,
 } from "../controllers/socials/blog.controller.js";
 
-import { verifyJWT } from "../middleware/auth.middleware.js";
 
 
 
