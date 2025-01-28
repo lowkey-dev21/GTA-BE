@@ -128,7 +128,7 @@ export const getFollowingStatus = async ( req , res ) => {
 }
 
 // get Follow suggestion
-export const getFollowSuggetion = async ( req, res ) => {
+export const getFollowSuggestion = async ( req, res ) => {
     try {
         const limit = parseInt(req.query.limit) || 10;
     
