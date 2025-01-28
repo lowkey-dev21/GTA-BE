@@ -1,14 +1,14 @@
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
-import auth from "./src/routes/auth.route.js";
-import onboard from "./src/routes/onboarding.route.js";
-import home from "./src/routes/home.route.js";
-import socials from "./src/routes/socials.route.js";
-import { verifyJWT } from "./src/middleware/auth.middleware.js";
+import auth from "./routes/auth.route.js";
+import onboard from "./routes/onboarding.route.js";
+import home from "./routes/home.route.js";
+import socials from "./routes/socials.route.js";
+import { verifyJWT } from "./middleware/auth.middleware.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { mongooDBConnect } from "./src/db/mongoose.db.js";
+import { mongooDBConnect } from "./db/mongoose.db.js";
 
 const app = express();
 const PORT = process.env.PORT;
