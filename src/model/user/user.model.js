@@ -42,11 +42,11 @@ const userSchema = new Schema(
     level: {
       amateur: {
         type:  Boolean,
-        default: false
+        default: true
      },
       beginner: {
           type: Boolean,
-          default: true
+          default: false
       },
       expert: {
           type: Boolean,

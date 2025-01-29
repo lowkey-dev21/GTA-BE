@@ -112,7 +112,7 @@ export const getAllPosts = async (req, res) => {
       .populate({
         path: 'author',
         model: 'User',
-        select: 'username name profilePicture userId'
+        select: 'username firstName lastName profilePicture userId'
       })
       .sort({ createdAt: -1 })
       .lean();
@@ -129,7 +129,7 @@ export const getAllPosts = async (req, res) => {
         title: post.title,
         content: post.content,
         author: post.author?.username || 'Unknown',
-        fullName: post.author?.name || 'Unknown',
+        fullName: post.author?.firstName + ' ' + post.author?.lastName || 'Unknown',
         profilePicture: post.author?.profilePicture || null,
         createdAt: formatDistanceToNow(new Date(post.createdAt), {
           addSuffix: true,

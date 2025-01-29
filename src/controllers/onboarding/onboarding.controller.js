@@ -23,24 +23,68 @@ const storage = multer.diskStorage({
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = `${Date.now()}-${Math.round(
-      Math.random() * 1e9,
-    )}${path.extname(file.originalname)}`;
-    cb(null, uniqueSuffix);
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `${uniqueSuffix}${ext}`);
   },
 });
 
 const upload = multer({
   storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
   fileFilter: (req, file, cb) => {
-    let ext = path.extname(file.originalname);
-    if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
-      throw Error("File type is not supported");
+    // Check MIME type
+    const allowedMimes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'image/gif'
+    ];
+
+    if (!allowedMimes.includes(file.mimetype)) {
+      cb(new Error('Invalid file type. Only JPG, JPEG, PNG, WebP and GIF files are allowed.'), false);
       return;
     }
+
+    // Check extension
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExt = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+    
+    if (!allowedExt.includes(ext)) {
+      cb(new Error('Invalid file extension.'), false);
+      return;
+    }
+
     cb(null, true);
-  },
+  }
 });
+
+// Error handling middleware
+export const handleUpload = (req, res, next) => {
+  upload.single('profilePicture')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          error: true,
+          message: 'File is too large. Maximum size is 5MB'
+        });
+      }
+      return res.status(400).json({
+        error: true,
+        message: err.message
+      });
+    } else if (err) {
+      return res.status(400).json({
+        error: true,
+        message: err.message
+      });
+    }
+    next();
+  });
+};
 
 // create username in the onboarding
 export const createUsername = async (req, res) => {
@@ -119,7 +163,7 @@ export const createCountry = async (req, res) => {
 
 // Handle single image upload and update profile picture
 export const uploadProfilePicture = [
-  upload.single("profilePicture"), // 'profilePicture' is the field name in the form
+  handleUpload, // Use the new error handling middleware
   async (req, res) => {
     try {
       const userId = req.user._id;
