@@ -28,8 +28,8 @@ router.delete("/post/delete-post",  deletePost);
 // Following
 router.post("/follow/follow-user", follow)
 router.post("/follow/unfollow-user", unfollow)
-router.post("/follow/get-following", getFollowers)
-router.post("/follow/get-following", getFollowing)
+router.get("/follow/get-followers", getFollowers)
+router.get("/follow/get-following", getFollowing)
 router.post("/follow/get-following-status", getFollowingStatus)
-router.post("/follow/get-follow-suggestion", getFollowSuggestion)
+router.get("/follow/get-follow-suggestion", getFollowSuggestion)
 export default router;

@@ -4,11 +4,11 @@ import User from "../../model/user/user.model.js"
 //follow a user 
 export const follow = async(req,res) =>{
     try {
-        const {followingId } = req.body
+        const { followingId } = req.body
         const userToFollow = await User.findById(followingId)
         if(!userToFollow) return res.status(404).json({ message: "User not found" })
 
-      await Follow.findAndUpdate({
+      await Follow.findOneAndUpdate({
         follower: req.user._id,
         following: userToFollow._id
       },
@@ -36,7 +36,7 @@ export const unfollow = async (req,res) => {
         const userToUnfollow = await User.findById(followingId)
         if(!userToUnfollow) return res.status(404).json({message: 'User not found'})
         
-        await Follow.deletOne({
+        await Follow.deleteOne({
             follower: req.user._id,
             following: userToUnfollow._id
         })
@@ -82,7 +82,7 @@ export const getFollowing = async(req,res) => {
         const limit = parseInt(req.query.limit) || 20;
         const skip = (page - 1) * limit;
 
-        const following = await Relationship.find({ follower: req.user.id })
+        const following = await Follow.find({ follower: req.user.id })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
