@@ -32,4 +32,6 @@ router.get("/follow/get-followers", getFollowers)
 router.get("/follow/get-following", getFollowing)
 router.post("/follow/get-following-status", getFollowingStatus)
 router.get("/follow/get-follow-suggestion", getFollowSuggestion)
+
+// social user
 export default router;

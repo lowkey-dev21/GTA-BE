@@ -129,6 +129,7 @@ export const getAllPosts = async (req, res) => {
         title: post.title,
         content: post.content,
         author: post.author?.username || 'Unknown',
+        authorId: post.author?._id || "no Id",
         fullName: post.author?.firstName + ' ' + post.author?.lastName || 'Unknown',
         profilePicture: post.author?.profilePicture || null,
         createdAt: formatDistanceToNow(new Date(post.createdAt), {
